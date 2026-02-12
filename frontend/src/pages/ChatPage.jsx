@@ -1,15 +1,13 @@
 import { useAuthStore } from "../store/useAuthStore";
+import { LoaderIcon } from "lucide-react";
 
 function ChatPage() {
 
-  const {user,isLoggedIn} = useAuthStore();
-
-  console.log(user)
-  console.log(isLoggedIn);
+  const {logout,isLoggingOut} = useAuthStore();
 
 
   return (
-    <div>ChatPage</div>
+    <button style={{zIndex:10}} onClick={logout}>{isLoggingOut ? <LoaderIcon className="w-full h-5 animate-spin text-center" /> : "Logout"}</button>
   )
 }
 
