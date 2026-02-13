@@ -2,12 +2,14 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 
+
 export const useAuthStore = create((set) => ({
   authUser: null,
   isCheckingAuth: true,
   isSigningUp: false,
   isLoggingIn: false,
   isLoggingOut: false,
+  isUpdatingProfile: false,
 
   checkAuth: async () => {
     try {
@@ -57,7 +59,7 @@ export const useAuthStore = create((set) => ({
   },
 
   logout: async () => {
-    set({ isLoggingOut: true});
+    set({ isLoggingOut: true });
     try {
       await axiosInstance.post("/auth/logout");
       set({ authUser: null });
@@ -66,6 +68,20 @@ export const useAuthStore = create((set) => ({
       toast.error(error.response.data.message);
     } finally {
       set({ isLoggingOut: false });
+    }
+  },
+
+  updateProfile: async (data) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const res = await axiosInstance.put("/auth/update-profile", data);
+
+      set({ authUser: res.data });
+      toast.success("Profile Pic Updated Successfully");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 }));
