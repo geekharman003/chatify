@@ -21,7 +21,9 @@ function ChatsList() {
         <div
           key={partner._id}
           className="bg-cyan-500/10 p-4 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition-colors"
-          onClick={() => setSelectedUser(partner)}
+          onClick={() => {
+            setSelectedUser(partner);
+          }}
         >
           <div className="flex items-center gap-3">
             <div className={`avatar online`}>
