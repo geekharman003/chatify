@@ -5,15 +5,27 @@ import ChatHeader from "./ChatHeader.jsx";
 import NoChatHistoryPlaceHolder from "./NoChatHistoryPlaceHolder.jsx"
 import MessageInput from "./MessageInput.jsx";
 import MessagesLoadingSkeleton from "./MessagesLoadingSkeleton.jsx";
+import { useRef } from "react";
 
 function ChatContainer() {
 
   const {authUser} = useAuthStore();
   const {messages,getMessagesByUserId,selectedUser,isMessagesLoading} = useChatStore();
 
+  const scrollRef = useRef(null);
+
+
   useEffect(() => {
     getMessagesByUserId(selectedUser._id);
   },[getMessagesByUserId,selectedUser])
+
+  useEffect(() => {
+    if(scrollRef.current) {
+      scrollRef.current.scrollIntoView({behavior:"smooth"});
+    }
+  },[messages]);
+
+
 
    return (
     <>
@@ -37,7 +49,7 @@ function ChatContainer() {
                     <img src={msg.image} alt="Shared" className="rounded-lg h-48 object-cover" />
                   )}
                   {msg.text && <p className="mt-2">{msg.text}</p>}
-                  <p className="text-xs mt-1 opacity-75 flex items-center gap-1">
+                  <p className="text-xs mt-1 opacity-75 flex justify-end items-center gap-1">
                     {new Date(msg.createdAt).toLocaleTimeString("en-IN", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -50,6 +62,9 @@ function ChatContainer() {
         ): isMessagesLoading ? <MessagesLoadingSkeleton /> : (
           <NoChatHistoryPlaceHolder name={selectedUser.fullName} />
         )}
+
+        {/* scrolls the messages to top */}
+        <div ref={scrollRef}></div>
       </div>
       <MessageInput />
 
