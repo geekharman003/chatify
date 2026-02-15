@@ -9,6 +9,8 @@ function ProfileHeader() {
 
   const {logout,authUser,updateProfile,isUpdatingProfile,onlineUsers} = useAuthStore();
   const {isSoundEnabled,toggleSound} = useChatStore();
+
+  console.log(onlineUsers,authUser)
   const [selectedImg,setSelectedImg] = useState(null);
 
   const fileInputRef = useRef();
@@ -45,7 +47,7 @@ function ProfileHeader() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* AVATAR */} 
-          <div className={`avatar ${onlineUsers.includes(authUser.id) ? "online" : "offline"}`}>
+          <div className={`avatar ${onlineUsers.includes(authUser._id) ? "online" : "offline"}`}>
             {isUpdatingProfile ? <LoaderIcon className="w-full h-5 animate-spin text-center" /> : <button
               className="size-14 rounded-full overflow-hidden relative group"
               onClick={() => fileInputRef.current.click()}
@@ -77,7 +79,7 @@ function ProfileHeader() {
               {authUser.fullName}
             </h3>
 
-            <p className="text-slate-400 text-xs">{onlineUsers.includes(authUser.id) ? "Online" : "Offline"}</p>
+            <p className="text-slate-400 text-xs">{onlineUsers.includes(authUser._id) ? "Online" : "Offline"}</p>
           </div>
         </div>
 
