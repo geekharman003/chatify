@@ -14,7 +14,6 @@ function ChatContainer() {
 
   const scrollRef = useRef(null);
 
-
   useEffect(() => {
     getMessagesByUserId(selectedUser._id);
   },[getMessagesByUserId,selectedUser])

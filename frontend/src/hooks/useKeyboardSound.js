@@ -10,7 +10,7 @@ function useKeyboardSound() {
     const randomSound = keyStrokeSounds[Math.floor(Math.random() * keyStrokeSounds.length)];
 
     randomSound.currentTime = 0;
-    randomSound.play().catch((error) => console.log("random audio error"));
+    randomSound.play().catch(() => console.log("random audio error"));
   };
 
 
