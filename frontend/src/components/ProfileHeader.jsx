@@ -10,7 +10,6 @@ function ProfileHeader() {
   const {logout,authUser,updateProfile,isUpdatingProfile,onlineUsers} = useAuthStore();
   const {isSoundEnabled,toggleSound} = useChatStore();
 
-  console.log(onlineUsers,authUser)
   const [selectedImg,setSelectedImg] = useState(null);
 
   const fileInputRef = useRef();
