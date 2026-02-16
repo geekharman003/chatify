@@ -10,21 +10,22 @@ import { useRef } from "react";
 function ChatContainer() {
 
   const {authUser} = useAuthStore();
-  const {messages,getMessagesByUserId,selectedUser,isMessagesLoading} = useChatStore();
+  const {messages,getMessagesByUserId,selectedUser,isMessagesLoading,subscribeToMessages,unsubscribeFromMessages} = useChatStore();
 
   const scrollRef = useRef(null);
 
   useEffect(() => {
     getMessagesByUserId(selectedUser._id);
-  },[getMessagesByUserId,selectedUser])
+    subscribeToMessages();
+
+    return () => unsubscribeFromMessages();
+  },[getMessagesByUserId,selectedUser,subscribeToMessages,unsubscribeFromMessages])
 
   useEffect(() => {
     if(scrollRef.current) {
       scrollRef.current.scrollIntoView({behavior:"smooth"});
     }
   },[messages]);
-
-
 
    return (
     <>
