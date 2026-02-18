@@ -4,14 +4,21 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
+  text: "",
   activeTab: "chats",
   messages: [],
+  lastReceivedMessage: null,
+  suggestions: [],
   chatPartners: [],
   contacts: [],
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
   isSoundEnabled: JSON.parse(localStorage.getItem("isSoundEnabled")) === true,
+
+  setText: (text) => {
+    set({ text });
+  },
 
   toggleSound: () => {
     localStorage.setItem("isSoundEnabled", !get().isSoundEnabled);
@@ -106,6 +113,39 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  getLastReceivedMessage: () => {
+    const { authUser } = useAuthStore.getState();
+    const { messages } = get();
+
+    let lastMessage = null;
+
+    messages.forEach((msg) => {
+      if (msg.senderId !== authUser._id) {
+        lastMessage = msg;
+      }
+    });
+
+    set({ lastReceivedMessage: lastMessage });
+  },
+
+  generateAutoSuggestions: async () => {
+    const lastReceivedMessage = get().lastReceivedMessage;
+    if (!lastReceivedMessage) return;
+
+    try {
+      const res = await axiosInstance.post("/messages/suggestions", {
+        lastReceivedMessage: lastReceivedMessage.text,
+      });
+
+      set({ suggestions: res.data });
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Error generating suggestions",
+      );
+      set({ suggestions: [] });
+    }
+  },
+
   subscribeToMessages: () => {
     const selectedUser = get().selectedUser;
 
@@ -115,9 +155,9 @@ export const useChatStore = create((set, get) => ({
     const { socket } = useAuthStore.getState();
 
     socket.on("newMessage", (newMessage) => {
-  
       // if selected user is not sender then return
-      if(newMessage.senderId !== selectedUser._id) return;
+      
+      if (newMessage.senderId !== selectedUser._id) return;
       set((state) => ({
         messages: [...state.messages, newMessage],
       }));

@@ -1,4 +1,5 @@
 import cloudinary from "../lib/cloudinary.js";
+import { main } from "../lib/gemini.js";
 import { getReciverSocketId, io } from "../lib/socket.js";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
@@ -51,12 +52,12 @@ export const sendMessage = async (req, res) => {
 
     if (senderId.equals(receiverId)) {
       return res
-      .status(400)
-      .json({ message: "You can't send message to yourself." });
+        .status(400)
+        .json({ message: "You can't send message to yourself." });
     }
-    
+
     const receiverExists = await User.exists({ _id: receiverId });
-    
+
     if (!receiverExists) {
       return res.status(404).json({ message: "Receiver not found" });
     }
@@ -80,16 +81,14 @@ export const sendMessage = async (req, res) => {
     // if user is online it will get the message instantly
     const receiverSocketId = getReciverSocketId(receiverId);
 
-    if(receiverSocketId){
+    if (receiverSocketId) {
       // console.log(receiverSocketId)
-      for(let socketId of receiverSocketId){
-        io.to(socketId).emit("newMessage",newMessage);
+      for (let socketId of receiverSocketId) {
+        io.to(socketId).emit("newMessage", newMessage);
       }
-    }
-    else{
+    } else {
       console.log("receiver is offline");
     }
-    
 
     res.status(201).json(newMessage);
   } catch (error) {
@@ -97,6 +96,20 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const generateAutoSuggestions = async (req, res) => {
+  const { lastReceivedMessage } = req.body;
+  if (!lastReceivedMessage)
+    return res.status(400).json({ message: "please provide last message" });
+
+  try {
+    const suggestions = await main(lastReceivedMessage);
+    res.status(200).json(suggestions);
+  } catch (error) {
+    console.log("Error in generating auto suggestions:", error);
+    res.status(500).json({message:"Internal Server Error"});
+  }
+}
 
 export const getChatPartners = async (req, res) => {
   try {

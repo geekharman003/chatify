@@ -9,12 +9,12 @@ function MessageInput() {
 
     const { playRandomKeyStrokeSound } = useKeyboardSound();
 
-    const [text,setText] = useState("");
+    // const [text,setText] = useState("");
     const [imagePreview,setImagePreview] = useState(null);
 
     const fileInputRef = useRef(null);
 
-    const {sendMessage,isSoundEnabled} = useChatStore();
+    const {text,setText,sendMessage,isSoundEnabled} = useChatStore();
 
     const handleSendMessage = (e) => {
         e.preventDefault();

@@ -1,16 +1,27 @@
 import { useEffect } from "react";
-import { useChatStore } from "../store/useChatStore"
+import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore.js";
 import ChatHeader from "./ChatHeader.jsx";
-import NoChatHistoryPlaceHolder from "./NoChatHistoryPlaceHolder.jsx"
+import NoChatHistoryPlaceHolder from "./NoChatHistoryPlaceHolder.jsx";
 import MessageInput from "./MessageInput.jsx";
 import MessagesLoadingSkeleton from "./MessagesLoadingSkeleton.jsx";
 import { useRef } from "react";
 
 function ChatContainer() {
-
-  const {authUser} = useAuthStore();
-  const {messages,getMessagesByUserId,selectedUser,isMessagesLoading,subscribeToMessages,unsubscribeFromMessages} = useChatStore();
+  const { authUser } = useAuthStore();
+  const {
+    messages,
+    getMessagesByUserId,
+    selectedUser,
+    isMessagesLoading,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+    lastReceivedMessage,
+    getLastReceivedMessage,
+    suggestions,
+    generateAutoSuggestions,
+    setText,
+  } = useChatStore();
 
   const scrollRef = useRef(null);
 
@@ -19,15 +30,25 @@ function ChatContainer() {
     subscribeToMessages();
 
     return () => unsubscribeFromMessages();
-  },[getMessagesByUserId,selectedUser,subscribeToMessages,unsubscribeFromMessages])
+  }, [
+    getMessagesByUserId,
+    selectedUser,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
 
   useEffect(() => {
-    if(scrollRef.current) {
-      scrollRef.current.scrollIntoView({behavior:"smooth"});
+    getLastReceivedMessage();
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  },[messages]);
+  }, [messages, getLastReceivedMessage]);
 
-   return (
+  useEffect(() => {
+    generateAutoSuggestions();
+  }, [lastReceivedMessage, generateAutoSuggestions]);
+
+  return (
     <>
       <ChatHeader />
       <div className="flex-1 px-6 overflow-y-auto py-8">
@@ -46,7 +67,11 @@ function ChatContainer() {
                   }`}
                 >
                   {msg.image && (
-                    <img src={msg.image} alt="Shared" className="rounded-lg h-48 object-cover" />
+                    <img
+                      src={msg.image}
+                      alt="Shared"
+                      className="rounded-lg h-48 object-cover"
+                    />
                   )}
                   {msg.text && <p className="mt-2">{msg.text}</p>}
                   <p className="text-xs mt-1 opacity-75 flex justify-end items-center gap-1">
@@ -58,8 +83,22 @@ function ChatContainer() {
                 </div>
               </div>
             ))}
+            <div className="flex flex-wrap gap-2 justify-center">
+              {suggestions.length > 0 &&
+                suggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => setText(e.target.textContent)}
+                    className="px-4 py-2 text-xs font-medium text-cyan-400 bg-cyan-500/10 rounded-full hover:bg-cyan-500/20 transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+            </div>
           </div>
-        ): isMessagesLoading ? <MessagesLoadingSkeleton /> : (
+        ) : isMessagesLoading ? (
+          <MessagesLoadingSkeleton />
+        ) : (
           <NoChatHistoryPlaceHolder name={selectedUser.fullName} />
         )}
 
@@ -67,9 +106,8 @@ function ChatContainer() {
         <div ref={scrollRef}></div>
       </div>
       <MessageInput />
-
     </>
   );
 }
 
-export default ChatContainer
+export default ChatContainer;
