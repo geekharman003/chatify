@@ -120,7 +120,7 @@ export const useChatStore = create((set, get) => ({
     let lastMessage = null;
 
     messages.forEach((msg) => {
-      if (msg.senderId !== authUser._id) {
+      if (msg.senderId !== authUser._id && msg.text) {
         lastMessage = msg;
       }
     });
