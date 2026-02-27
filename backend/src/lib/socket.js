@@ -19,13 +19,13 @@ io.use(socketAuthMiddleware);
 
 export const getReciverSocketId = (userId) => {
   return userSocketMap.get(userId);
-}
+};
 
 // stores online users
 const userSocketMap = new Map(); //{userId: set<socketId>}
 
 // io.on is used to listen events for all sockets
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log("A user is connected:", socket.user.fullName);
   const userId = socket.user._id.toString();
 
@@ -41,12 +41,8 @@ io.on("connection", (socket) => {
     userSocketMap.set(userId, setOfSocketIds);
   }
 
-
   //   io.emit is used to send events to all connected clients
-  io.emit(
-    "getOnlineUsers",
-    [...userSocketMap.keys()],
-  );
+   io.emit("getOnlineUsers", [...userSocketMap.keys()]);
 
   //   socket.on is used to listen events
   socket.on("disconnect", () => {
@@ -58,15 +54,11 @@ io.on("connection", (socket) => {
 
     if (setOfSocketIds.size === 0) {
       userSocketMap.delete(userId);
-    }
-    else{
+    } else {
       userSocketMap.set(userId, setOfSocketIds);
     }
 
-    io.emit(
-      "getOnlineUsers",
-      [...userSocketMap.keys()],
-    );
+    io.emit("getOnlineUsers", [...userSocketMap.keys()]);
   });
 });
 
