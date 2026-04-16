@@ -1,3 +1,4 @@
+<img width="2658" height="1595" alt="chatify" src="https://github.com/user-attachments/assets/560f4aac-956d-4ee5-ad50-778552781fc7" />
 # 💬 Chat App
 
 A full-stack real-time chat application built with modern web technologies. This app allows users to sign up, log in, and exchange messages instantly with a clean and responsive interface.
@@ -127,11 +128,14 @@ npm run dev
 
 ## 📸 Screenshots
 
-* Login Page
+* Signup Page
+<img width="2578" height="1537" alt="singup-page" src="https://github.com/user-attachments/assets/d76cc54b-842c-4860-96dd-13708bf733b5" />
 
+* Login Page
+<img width="2557" height="1527" alt="login-page" src="https://github.com/user-attachments/assets/38581b4e-07db-4b33-871c-bbe3b2884faf" />
 
 * Chat Interface
-* Sidebar with Users
+<img width="2658" height="1595" alt="chatify" src="https://github.com/user-attachments/assets/df7247ed-9408-4e22-8e2a-0582b75298b4" />
 
 ---
 
